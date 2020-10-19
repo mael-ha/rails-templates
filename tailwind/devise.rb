@@ -27,11 +27,11 @@ run 'rm -rf app/assets/stylesheets'
 run 'rm -rf vendor'
 
 # generate stylesheets in app/javascript
-run 'curl -L https://github.com/******/stylesheets.zip > stylesheets.zip'
+run 'curl -L https://github.com/mael-ha/rails-templates/blob/master/tailwind/stylesheets.zip > stylesheets.zip'
 run 'unzip stylesheets.zip -d app/assets && rm stylesheets.zip'
 
 # generate shared views in app/views includ. Tailwind components
-run 'curl -L https://github.com/******/shared.zip > shared.zip'
+run 'curl -L https://github.com/mael-ha/rails-templates/blob/master/tailwind/shared.zip > shared.zip'
 run 'unzip shared.zip -d app/views && rm shared.zip'
 
 # configure application.js
