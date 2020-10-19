@@ -20,27 +20,6 @@ end
 
 gsub_file('Gemfile', /# gem 'redis'/, "gem 'redis'")
 
-# Assets - Setup Tailwind
-########################################
-run "yarn add tailwindcss"
-run 'rm -rf app/assets/stylesheets'
-run 'rm -rf vendor'
-
-# generate stylesheets in app/javascript
-run 'curl -L https://github.com/mael-ha/rails-templates/blob/master/tailwind/stylesheets.zip > stylesheets.zip'
-run 'unzip stylesheets.zip -d app/assets && rm stylesheets.zip'
-
-# generate shared views in app/views includ. Tailwind components
-run 'curl -L https://github.com/mael-ha/rails-templates/blob/master/tailwind/shared.zip > shared.zip'
-run 'unzip shared.zip -d app/views && rm shared.zip'
-
-# configure application.js
-append_to_file "app/javascript/packs/application.js", 'import "../stylesheets/application.scss"'
-
-# configure postcss
-inject_into_file "postcss.config.js", "    require('tailwindcss'),\n", after: "require('postcss-import'),\n"
-inject_into_file "postcss.config.js", "    require('autoprefixer'),\n", after: "plugins: [\n"
-
 # Dev environment
 ########################################
 gsub_file('config/environments/development.rb', /config\.assets\.debug.*/, 'config.assets.debug = false')
@@ -188,6 +167,28 @@ after_bundle do
   # Rubocop
   ########################################
   run 'curl -L https://raw.githubusercontent.com/lewagon/rails-templates/master/.rubocop.yml > .rubocop.yml'
+
+  # Assets - Setup Tailwind
+  ########################################
+  run "yarn add tailwindcss"
+  run 'rm -rf app/assets/stylesheets'
+  run 'rm -rf vendor'
+
+  # generate stylesheets in app/javascript
+  run 'curl -L https://github.com/mael-ha/rails-templates/blob/master/tailwind/stylesheets.zip > stylesheets.zip'
+  run 'unzip stylesheets.zip -d app/assets && rm stylesheets.zip'
+
+  # generate shared views in app/views includ. Tailwind components
+  run 'curl -L https://github.com/mael-ha/rails-templates/blob/master/tailwind/shared.zip > shared.zip'
+  run 'unzip shared.zip -d app/views && rm shared.zip'
+
+  # configure application.js
+  append_to_file "app/javascript/packs/application.js", 'import "../stylesheets/application.scss"'
+
+  # configure postcss
+  inject_into_file "postcss.config.js", "    require('tailwindcss'),\n", after: "require('postcss-import'),\n"
+  inject_into_file "postcss.config.js", "    require('autoprefixer'),\n", after: "plugins: [\n"
+
 
   # Git
   ########################################
