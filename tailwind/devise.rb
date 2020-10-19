@@ -1,3 +1,5 @@
+run "if uname | grep -q 'Darwin'; then pgrep spring | xargs kill -9; fi"
+
 # GEMFILE
 ########################################
 inject_into_file 'Gemfile', before: 'group :development, :test do' do
@@ -41,13 +43,18 @@ style = <<~HTML
 HTML
 gsub_file('app/views/layouts/application.html.erb', "<%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>", style)
 
-# Shared files
-########################################
+# Assets - Setup Tailwind
+  ########################################
+  run 'rm -rf app/assets/stylesheets'
+  run 'rm -rf vendor'
 
+  # generate stylesheets in app/javascript
+  run 'curl -L https://github.com/mael-ha/rails-templates/blob/master/tailwind/stylesheets.zip > stylesheets.zip'
+  run 'unzip stylesheets.zip -d app/assets && rm stylesheets.zip'
 
-run 'curl -L https://github.com/lewagon/awesome-navbars/raw/master/templates/_navbar_wagon.html.erb > app/views/shared/_navbar.html.erb'
-
-
+  # generate shared views in app/views includ. Tailwind components
+  run 'curl -L https://github.com/mael-ha/rails-templates/blob/master/tailwind/shared.zip > shared.zip'
+  run 'unzip shared.zip -d app/views && rm shared.zip'
 
 inject_into_file 'app/views/layouts/application.html.erb', after: '<body>' do
   <<-HTML
@@ -136,14 +143,14 @@ after_bundle do
 
   # Webpacker / Yarn
   ########################################
-  # run 'yarn add taiwindcss'
+  run "yarn add tailwindcss"
   append_file 'app/javascript/packs/application.js', <<~JS
     // ----------------------------------------------------
     // Note(lewagon): ABOVE IS RAILS DEFAULT CONFIGURATION
     // WRITE YOUR OWN JS STARTING FROM HERE 👇
     // ----------------------------------------------------
     // External imports
-    // import "bootstrap";
+    import "../stylesheets/application.scss";
     // Internal imports, e.g:
     // import { initSelect2 } from '../components/init_select2';
     document.addEventListener('turbolinks:load', () => {
@@ -168,22 +175,8 @@ after_bundle do
   ########################################
   run 'curl -L https://raw.githubusercontent.com/lewagon/rails-templates/master/.rubocop.yml > .rubocop.yml'
 
-  # Assets - Setup Tailwind
-  ########################################
-  run "yarn add tailwindcss"
-  run 'rm -rf app/assets/stylesheets'
-  run 'rm -rf vendor'
-
-  # generate stylesheets in app/javascript
-  run 'curl -L https://github.com/mael-ha/rails-templates/blob/master/tailwind/stylesheets.zip > stylesheets.zip'
-  run 'unzip stylesheets.zip -d app/assets && rm stylesheets.zip'
-
-  # generate shared views in app/views includ. Tailwind components
-  run 'curl -L https://github.com/mael-ha/rails-templates/blob/master/tailwind/shared.zip > shared.zip'
-  run 'unzip shared.zip -d app/views && rm shared.zip'
-
-  # configure application.js
-  append_to_file "app/javascript/packs/application.js", 'import "../stylesheets/application.scss"'
+  # # configure application.js
+  # append_to_file "app/javascript/packs/application.js", 'import "../stylesheets/application.scss"'
 
   # configure postcss
   inject_into_file "postcss.config.js", "    require('tailwindcss'),\n", after: "require('postcss-import'),\n"
