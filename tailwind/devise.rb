@@ -20,6 +20,8 @@ inject_into_file 'Gemfile', after: 'group :development, :test do' do
   RUBY
 end
 
+run "bundle install"
+
 gsub_file('Gemfile', /# gem 'redis'/, "gem 'redis'")
 
 # Dev environment
@@ -85,7 +87,7 @@ environment generators
 ########################################
 # AFTER BUNDLE
 ########################################
-after_bundle do
+# after_bundle do
   # Generators: db + simple form + pages controller
   ########################################
   rails_command 'db:drop db:create db:migrate'
@@ -190,4 +192,4 @@ after_bundle do
 
   # Fix puma config
   gsub_file('config/puma.rb', 'pidfile ENV.fetch("PIDFILE") { "tmp/pids/server.pid" }', '# pidfile ENV.fetch("PIDFILE") { "tmp/pids/server.pid" }')
-end
+# end
