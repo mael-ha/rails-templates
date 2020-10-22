@@ -4,7 +4,6 @@ run "if uname | grep -q 'Darwin'; then pgrep spring | xargs kill -9; fi"
 ########################################
 inject_into_file 'Gemfile', before: 'group :development, :test do' do
   <<~RUBY
-    gem 'devise'
     gem 'autoprefixer-rails'
     gem 'font-awesome-sass'
     # gem 'simple_form'
@@ -83,7 +82,7 @@ after_bundle do
   # Routes
   ########################################
   route "root to: 'pages#home'"
-  route "get 'landmark', to: 'pages#landing', as: :landing"
+  route "get 'landmark', to: 'pages#landmark', as: :landmark"
   # Git ignore
   ########################################
   append_file '.gitignore', <<~TXT
@@ -94,31 +93,23 @@ after_bundle do
     .DS_Store
   TXT
 
-  # Devise install + user
-  ########################################
-  generate('devise:install')
-  generate('devise', 'User')
-
   # App controller
   ########################################
   run 'rm app/controllers/application_controller.rb'
   file 'app/controllers/application_controller.rb', <<~RUBY
     class ApplicationController < ActionController::Base
-    #{  "protect_from_forgery with: :exception\n" if Rails.version < "5.2"}  before_action :authenticate_user!
     end
   RUBY
 
   # migrate + devise views
   ########################################
   rails_command 'db:migrate'
-  generate('devise:views')
 
   # Pages Controller
   ########################################
   run 'rm app/controllers/pages_controller.rb'
   file 'app/controllers/pages_controller.rb', <<~RUBY
     class PagesController < ApplicationController
-      skip_before_action :authenticate_user!, only: [ :home, :landmark ]
       def home
       end
     end
@@ -190,11 +181,6 @@ after_bundle do
     <%= render 'shared/navbar' %>
   HTML
   end
-
-  run "rm 'app/views/pages/landmark.html.erb'"
-  file 'app/views/pages/landmark.html.erb', <<~HTML
-    <%= render 'shared/tw_landing_page/landmark' %>
-  HTML
 
   # Git
   ########################################
