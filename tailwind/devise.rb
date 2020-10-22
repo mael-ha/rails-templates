@@ -19,6 +19,21 @@ end
 
 gsub_file('Gemfile', /# gem 'redis'/, "gem 'redis'")
 
+# Assets - Setup Tailwind
+########################################
+run 'rm -rf app/assets/stylesheets'
+run 'rm -rf vendor'
+run 'curl -L https://github.com/mael-ha/rails-templates/raw/master/tailwind/assets-stylesheets.zip > assets-stylesheets.zip'
+run 'unzip assets-stylesheets.zip -d app/assets && rm assets-stylesheets.zip && mv app/assets/assets-stylesheets app/assets/stylesheets'
+
+# generate stylesheets in app/javascript
+run 'curl -L https://github.com/mael-ha/rails-templates/raw/master/tailwind/js-stylesheets.zip > js-stylesheets.zip'
+run 'mkdir app/javascript/stylesheets'
+run 'unzip js-stylesheets.zip -d app/javascript/stylesheets && rm js-stylesheets.zip'
+# # generate shared views in app/views includ. Tailwind components
+run 'curl -L https://github.com/mael-ha/rails-templates/raw/master/tailwind/shared.zip > shared.zip'
+run 'unzip shared.zip -d app/views/shared && rm shared.zip'
+
 # Dev environment
 ########################################
 gsub_file('config/environments/development.rb', /config\.assets\.debug.*/, 'config.assets.debug = false')
@@ -77,12 +92,11 @@ after_bundle do
   ########################################
   rails_command 'db:drop db:create db:migrate'
   # generate('simple_form:install')
-  generate(:controller, 'pages', 'home landmark', '--skip-routes', '--no-test-framework')
+  generate(:controller, 'pages', 'home', '--skip-routes', '--no-test-framework')
 
   # Routes
   ########################################
   route "root to: 'pages#home'"
-  route "get 'landmark', to: 'pages#landing', as: :landing"
   # Git ignore
   ########################################
   append_file '.gitignore', <<~TXT
@@ -165,35 +179,8 @@ after_bundle do
   # # configure application.js
 
   # configure postcss
-  inject_into_file "postcss.config.js", "    require('tailwindcss')('.app/javascript/stylesheets/tailwind.config.js'),\n", after: "require('postcss-import'),\n"
+  inject_into_file "postcss.config.js", "    require('tailwindcss')('./app/javascript/stylesheets/tailwind.config.js'),\n", after: "require('postcss-import'),\n"
   inject_into_file "postcss.config.js", "    require('autoprefixer'),\n", after: "plugins: [\n"
-
-  # Assets - Setup Tailwind
-  ########################################
-  run 'rm -rf app/assets/stylesheets'
-  run 'rm -rf vendor'
-  run 'curl https://github.com/mael-ha/rails-templates/raw/master/tailwind/assets-stylesheets.zip > assets-stylesheets.zip'
-  run 'unzip assets-stylesheets.zip -d app/assets && rm assets-stylesheets.zip && mv app/assets/assets-stylesheets app/assets/stylesheets'
-
-  # generate stylesheets in app/javascript
-  run 'curl -L https://github.com/mael-ha/rails-templates/raw/master/tailwind/js-stylesheets.zip > js-stylesheets.zip'
-  run 'unzip js-stylesheets.zip -d app/javascript && rm js-stylesheets.zip'
-
-  # # generate shared views in app/views includ. Tailwind components
-  run 'curl -L https://github.com/mael-ha/rails-templates/raw/master/tailwind/shared.zip > shared.zip'
-  run 'unzip shared.zip -d app/views && rm shared.zip'
-
-  # Prepare Home and Landmark
-  inject_into_file 'app/views/pages/home.html.erb', before: '<h1>' do
-  <<-HTML
-    <%= render 'shared/navbar' %>
-  HTML
-  end
-
-  run "rm 'app/views/pages/landmark.html.erb'"
-  file 'app/views/pages/landmark.html.erb', <<~HTML
-    <%= render 'shared/tw_landing_page/landmark' %>
-  HTML
 
   # Git
   ########################################
