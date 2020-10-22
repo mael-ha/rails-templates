@@ -1,5 +1,3 @@
-run "if uname | grep -q 'Darwin'; then pgrep spring | xargs kill -9; fi"
-
 # GEMFILE
 ########################################
 inject_into_file 'Gemfile', before: 'group :development, :test do' do
@@ -7,7 +5,6 @@ inject_into_file 'Gemfile', before: 'group :development, :test do' do
     gem 'devise'
     gem 'autoprefixer-rails'
     gem 'font-awesome-sass'
-    # gem 'simple_form'
     gem 'amazing_print'
   RUBY
 end
@@ -54,7 +51,7 @@ end
 # README
 ########################################
 markdown_file_content = <<-MARKDOWN
-Rails app generated with [lewagon/rails-templates](https://github.com/lewagon/rails-templates), created by the [Le Wagon coding bootcamp](https://www.lewagon.com) team.
+Test.
 MARKDOWN
 file 'README.md', markdown_file_content, force: true
 
