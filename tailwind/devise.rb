@@ -51,7 +51,9 @@ end
 # README
 ########################################
 markdown_file_content = <<-MARKDOWN
-Test.
+File generated with mael-ha's template customization of LeWagon's template.
+https://github.com/mael-ha/rails-templates
+https://github.com/lewagon/rails-templates
 MARKDOWN
 file 'README.md', markdown_file_content, force: true
 
@@ -74,7 +76,7 @@ after_bundle do
   # Generators: db + simple form + pages controller
   ########################################
   rails_command 'db:drop db:create db:migrate'
-  generate('simple_form:install')
+  # generate('simple_form:install')
   generate(:controller, 'pages', 'home landmark', '--skip-routes', '--no-test-framework')
 
   # Routes
