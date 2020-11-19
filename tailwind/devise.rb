@@ -144,7 +144,7 @@ after_bundle do
 
   # Webpacker / Yarn
   ########################################
-  run "yarn add tailwindcss"
+  run "yarn add tailwindcss@latest postcss@latest autoprefixer@latest"
   append_file 'app/javascript/packs/application.js', <<~JS
     // ----------------------------------------------------
     // Note(lewagon): ABOVE IS RAILS DEFAULT CONFIGURATION
